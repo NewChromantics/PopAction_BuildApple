@@ -1,0 +1,26 @@
+{
+  "name": "PopAppleAction",
+  "version": "1.0.0",
+  "description": "PopAppleAction",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thomasSDK/PopAppleAction.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thomasSDK/PopAppleAction/issues"
+  },
+  "homepage": "https://github.com/thomasSDK/PopAppleAction#readme",
+  "dependencies": {
+    "@actions/artifact": "^0.3.2",
+    "@actions/core": "^1.2.4",
+    "@actions/exec": "^1.0.4",
+    "@actions/github": "^4.0.0"
+  }
+}
