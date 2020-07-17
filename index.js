@@ -58,7 +58,7 @@ async function run() {
     buildDirectory = reg.exec(buildDirectory)
     console.log(buildDirectory[0])
 
-    console.log(await exec.exec("ls", [buildDirectory[0]]));
+    console.log(await exec.exec("ls", [`build/${buildDirectory[0]}`]));
 
     const files = [
       `build/${buildDirectory[0]}/${BuildScheme}.framework`,
