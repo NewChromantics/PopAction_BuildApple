@@ -56,13 +56,13 @@ async function run() {
     const rootDirectory = ".";
     let reg = /([\w-])+$/
     buildDirectory = reg.exec(buildDirectory)
-    console.log(buildDirectory)
+    console.log(buildDirectory[0])
 
-    console.log(await exec.exec("ls", [buildDirectory[1]]));
+    console.log(await exec.exec("ls", [buildDirectory[0]]));
 
     const files = [
-      `build/${buildDirectory}/${BuildScheme}.framework`,
-      `build/${buildDirectory}/${BuildScheme}.framework.dSYM`,
+      `build/${buildDirectory[0]}/${BuildScheme}.framework`,
+      `build/${buildDirectory[0]}/${BuildScheme}.framework.dSYM`,
     ];
 
     const options = {
