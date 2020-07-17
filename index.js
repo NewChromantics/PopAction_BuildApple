@@ -2,6 +2,7 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 const exec = require("@actions/exec");
 const artifact = require("@actions/artifact");
+const glob = require('@actions/glob')
 
 const BuildScheme = core.getInput("BuildScheme");
 
@@ -13,6 +14,9 @@ const artifactName = BuildScheme;
 const regex = /TARGET_BUILD_DIR = ([\/-\w]+)\n/;
 let buildDirectory = "";
 let myError = "";
+
+const patterns = ['**/build/*']
+
 
 async function run() {
   try {
@@ -58,9 +62,8 @@ async function run() {
     buildDirectory = reg.exec(buildDirectory)
     console.log(buildDirectory[0])
 
-    console.log(await exec.exec("ls", [`build/${buildDirectory[0]}`]));
-    console.log(`build/${buildDirectory[0]}/PopH264_Ios.framework${BuildScheme}.framework`)
-    console.log(`build/${buildDirectory[0]}/${BuildScheme}.framework.dSYM`)
+    const globber = await glob.create(patterns.join('\n'))
+    console.log(await globber.glob())
 
     const files = [
       `build/Release-iphoneos/PopH264_Ios.framework`,
