@@ -67,12 +67,6 @@ async function run() {
       `build/${buildDirectory[0]}/PopH264_Ios.framework.dSYM`, //${BuildScheme}.framework.dSYM`,
     ];
 
-    const files = [
-      `build/Linux_${architecture}/lib${project}.so`,
-      `build/Linux_${architecture}/${project}TestApp`,
-      `build/Linux_${architecture}/${project}.h`,
-    ];
-
     const options = {
       continueOnError: true,
     };
