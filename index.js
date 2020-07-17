@@ -5,7 +5,7 @@ const artifact = require("@actions/artifact");
 
 const BuildScheme = core.getInput("BuildScheme");
 
-const BuildProject = `${core.getInput("project")}.xcodeproj`
+const BuildProject = `${core.getInput("project")}.xcodeproj`;
 
 const artifactClient = artifact.create();
 const artifactName = BuildScheme;
@@ -53,19 +53,20 @@ async function run() {
       `${BuildScheme}`,
     ]);
 
-    const rootDirectory = buildDirectory[1];
+    const rootDirectory = ".";
+    let reg = /([\w-])+$/
+    buildDirectory = reg.exec(buildDirectory)
+    console.log(buildDirectory)
 
-    console.log(await exec.exec('ls', [buildDirectory[1]]))
-
-    console.log(rootDirectory);
+    console.log(await exec.exec("ls", [buildDirectory[1]]));
 
     const files = [
-      `${rootDirectory}/${BuildScheme}.framework`,
-      `${rootDirectory}/${BuildScheme}.framework.dSYM`,
+      `build/${buildDirectory}/${BuildScheme}.framework`,
+      `build/${buildDirectory}/${BuildScheme}.framework.dSYM`,
     ];
 
     const options = {
-      continueOnError: false,
+      continueOnError: true,
     };
     const uploadResponse = await artifactClient.uploadArtifact(
       artifactName,
