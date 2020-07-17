@@ -53,7 +53,7 @@ async function run() {
       `${BuildScheme}`,
     ]);
 
-    const rootDirectory = ".";
+    
     let reg = /([\w-])+$/
     buildDirectory = reg.exec(buildDirectory)
     console.log(buildDirectory[0])
@@ -63,9 +63,12 @@ async function run() {
     console.log(`build/${buildDirectory[0]}/${BuildScheme}.framework.dSYM`)
 
     const files = [
-      `build/${buildDirectory[0]}/PopH264_Ios.framework`, //${BuildScheme}.framework`,
-      `build/${buildDirectory[0]}/PopH264_Ios.framework.dSYM`, //${BuildScheme}.framework.dSYM`,
+      `build/Release-iphoneos/PopH264_Ios.framework`,
+      `build/Release-iphoneos/PopH264_Ios.framework.dSYM`,
     ];
+     //${BuildScheme}.framework`,
+      //${BuildScheme}.framework.dSYM`,
+    const rootDirectory = ".";
 
     const options = {
       continueOnError: true,
