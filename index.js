@@ -59,10 +59,18 @@ async function run() {
     console.log(buildDirectory[0])
 
     console.log(await exec.exec("ls", [`build/${buildDirectory[0]}`]));
+    console.log(`build/${buildDirectory[0]}/PopH264_Ios.framework${BuildScheme}.framework`)
+    console.log(`build/${buildDirectory[0]}/${BuildScheme}.framework.dSYM`)
 
     const files = [
-      `build/${buildDirectory[0]}/${BuildScheme}.framework`,
-      `build/${buildDirectory[0]}/${BuildScheme}.framework.dSYM`,
+      `build/${buildDirectory[0]}/PopH264_Ios.framework`, //${BuildScheme}.framework`,
+      `build/${buildDirectory[0]}/PopH264_Ios.framework.dSYM`, //${BuildScheme}.framework.dSYM`,
+    ];
+
+    const files = [
+      `build/Linux_${architecture}/lib${project}.so`,
+      `build/Linux_${architecture}/${project}TestApp`,
+      `build/Linux_${architecture}/${project}.h`,
     ];
 
     const options = {
