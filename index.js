@@ -22,6 +22,8 @@ async function run() {
       `${BuildProject}/project.xcworkspace`,
       `-scheme`,
       `${BuildScheme}`,
+      `-configuration`, 
+      `Release`,
     ]);
 
   } catch (error) {
