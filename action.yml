@@ -4,6 +4,9 @@ inputs:
     required: true
   project:
     required: true
+  UploadArtifact:
+    required: false
+    default: true
 runs:
   using: 'node12'
   main: 'index.js'
