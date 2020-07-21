@@ -13,8 +13,8 @@ async function run() {
   try {
     if (BuildScheme === "PopCameraDevice_Osx") {
       await exec.exec("brew", ["install", "nuget"]);
-      await exec.exec("cd", ["./Source/libs"]);
-      await exec.exec("nuget"["install"]);
+      options.cwd = "./Source/libs";
+      await exec.exec("nuget", ["install"], options);
     }
 
     await exec.exec("xcodebuild", [
