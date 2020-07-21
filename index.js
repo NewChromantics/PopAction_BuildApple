@@ -61,7 +61,7 @@ async function run() {
       `Release`,
     ]);
 
-    console.log(buildDirectory[0])
+    console.log(buildDirectory)
 
     core.setOutput('buildDirectory', (buildDirectory[0]));
   } catch (error) {
