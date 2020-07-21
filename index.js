@@ -28,6 +28,7 @@ async function run() {
         buildDirectory += data.toString();
         console.log(regex.exec(buildDirectory));
         buildDirectory = regex.exec(buildDirectory);
+        buildDirectory = buildDirectory[1];
       },
       stderr: (data) => {
         myError += data.toString();
@@ -63,7 +64,7 @@ async function run() {
 
     console.log(buildDirectory)
 
-    core.setOutput('buildDirectory', (buildDirectory[0]));
+    core.setOutput('buildDirectory', (buildDirectory));
   } catch (error) {
     core.setFailed(error.message);
   }
