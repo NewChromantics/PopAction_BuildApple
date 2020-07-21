@@ -34,6 +34,18 @@ async function run() {
       },
     };
 
+    await exec.exec(
+      "xcodebuild",
+      [
+        `-workspace`,
+        `${BuildProject}/project.xcworkspace`,
+        `-scheme`,
+        `${BuildScheme}`,
+        `-showBuildSettings`,
+      ],
+      outputOptions
+    );
+
     await exec.exec("xcodebuild", [
       `-workspace`,
       `${BuildProject}/project.xcworkspace`,
