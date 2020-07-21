@@ -6,11 +6,6 @@ const artifact = require("@actions/artifact");
 const BuildScheme = core.getInput("BuildScheme");
 const Project = core.getInput("project");
 
-const regex = /TARGET_BUILD_DIR = ([\/-\w]+)\n/;
-let buildDirectory = "";
-let myError = "";
-const options = {};
-
 const BuildProject = `${Project}.xcodeproj`;
 
 async function run() {
@@ -22,6 +17,9 @@ async function run() {
     }
 
     // Get BuildDirectory
+    const regex = /TARGET_BUILD_DIR = ([\/-\w]+)\n/;
+    let buildDirectory = "";
+    let myError = "";
     const outputOptions = {};
     outputOptions.listeners = {
       stdout: (data) => {
@@ -61,9 +59,9 @@ async function run() {
       `Release`,
     ]);
 
-    console.log(buildDirectory)
+    console.log(buildDirectory[1]);
 
-    core.setOutput('buildDirectory', (buildDirectory[1]));
+    core.setOutput("buildDirectory", buildDirectory[1]);
   } catch (error) {
     core.setFailed(error.message);
   }
