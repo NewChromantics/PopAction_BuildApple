@@ -2,14 +2,20 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 const exec = require("@actions/exec");
 const artifact = require("@actions/artifact");
-const glob = require('@actions/glob')
+const glob = require("@actions/glob");
 
 const BuildScheme = core.getInput("BuildScheme");
+const Project = core.getInput("project");
 
-const BuildProject = `${core.getInput("project")}.xcodeproj`;
+const BuildProject = `${Project}.xcodeproj`;
 
 async function run() {
   try {
+    if (BuildScheme === "PopCameraDevice_Osx") {
+      await exec.exec("brew", ["install", "nuget"]);
+      await exec.exec("cd", ["Source/libs"]);
+      await exec.exec("nuget"["install"]);
+    }
 
     await exec.exec("xcodebuild", [
       `-workspace`,
@@ -22,10 +28,9 @@ async function run() {
       `${BuildProject}/project.xcworkspace`,
       `-scheme`,
       `${BuildScheme}`,
-      `-configuration`, 
+      `-configuration`,
       `Release`,
     ]);
-
   } catch (error) {
     core.setFailed(error.message);
   }
