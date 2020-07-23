@@ -11,7 +11,7 @@ const BuildProject = `${Project}.xcodeproj`;
 async function run() {
   try {
     if (BuildScheme === "PopCameraDevice_Osx") {
-      await exec.exec("brew", ['upgrade', 'cmake'])
+      await exec.exec("brew", ['install', 'pkg-config'])
     }
 
     // Get BuildDirectory
