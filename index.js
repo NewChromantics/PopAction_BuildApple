@@ -57,9 +57,9 @@ async function run() {
       `Release`,
     ]);
 
-    console.log(buildDirectory[1]);
+    console.log(`${buildDirectory[1]}/${BuildScheme}.framework`);
 
-    core.setOutput("buildDirectory", buildDirectory[1]);
+    core.setOutput("buildDirectory", `${buildDirectory[1]}/${BuildScheme}.framework`);
   } catch (error) {
     core.setFailed(error.message);
   }
