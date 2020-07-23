@@ -10,6 +10,10 @@ const BuildProject = `${Project}.xcodeproj`;
 
 async function run() {
   try {
+    if (BuildScheme === "PopCameraDevice_Osx") {
+      await exec.exec("brew", ['upgrade', 'cmake'])
+    }
+
     // Get BuildDirectory
     const regex = /TARGET_BUILD_DIR = ([\/-\w]+)\n/;
     let buildDirectory = "";
