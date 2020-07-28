@@ -59,6 +59,7 @@ async function run() {
 
     console.log(`${buildDirectory[1]}/${BuildScheme}.framework`);
 
+    core.exportVariable('UPLOAD_NAME', `${BuildScheme}.framework`);
     core.exportVariable('UPLOAD_DIR', `${buildDirectory[1]}/${BuildScheme}.framework`);
   } catch (error) {
     core.setFailed(error.message);
