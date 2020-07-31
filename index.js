@@ -5,11 +5,20 @@ const artifact = require("@actions/artifact");
 
 const BuildScheme = core.getInput("BuildScheme");
 const Project = core.getInput("project");
+const Configuration = core.getInput("Configuration") || "Release";
 
 const BuildProject = `${Project}.xcodeproj`;
 
-async function run() {
-  try {
+async function run() 
+{
+  try 
+  {
+    if ( !BuildScheme )
+      throw `No BuildScheme provided, required.`;
+        
+    if ( !Project )
+      throw `No Project provided, required.`;
+        
     if (BuildScheme === "PopCameraDevice_Osx") {
       await exec.exec("brew", ['install', 'pkg-config'])
     }
@@ -29,12 +38,21 @@ async function run() {
         myError += data.toString();
       },
     };
+    console.log(`Build directory determined to be ${buildDirectory}`);
 
+    //  gr: removed  
+    //    `-workspace`, `${BuildProject}/project.xcworkspace`,
+    //  from these as it was erroring with an unknown error on xcode11/mojave (but okay on xcode10/high sierra)
+  
+    console.log(`Listing schemes & configurations...`);
+    await exec.exec("xcodebuild", [
+      `-list`,
+    ]);
+
+    console.log(`Listing build settings for BuildScheme=${BuildScheme}...`);
     await exec.exec(
       "xcodebuild",
       [
-        `-workspace`,
-        `${BuildProject}/project.xcworkspace`,
         `-scheme`,
         `${BuildScheme}`,
         `-showBuildSettings`,
@@ -42,26 +60,35 @@ async function run() {
       outputOptions
     );
 
+    //  gr: clean first, just in case
+    console.log(`Clean with BuildScheme=${BuildScheme}...`);
     await exec.exec("xcodebuild", [
-      `-workspace`,
-      `${BuildProject}/project.xcworkspace`,
-      `-list`,
+      `-scheme`,
+      `${BuildScheme}`,
+      `clean`,
     ]);
 
+    //  gr: make Release a configuration
+    console.log(`Build with BuildScheme=${BuildScheme}, Configuration=${Configuration}...`);
     await exec.exec("xcodebuild", [
-      `-workspace`,
-      `${BuildProject}/project.xcworkspace`,
       `-scheme`,
       `${BuildScheme}`,
       `-configuration`,
-      `Release`,
+      `${Configuration}`,
     ]);
 
-    console.log(`${buildDirectory[1]}/${BuildScheme}.framework`);
+    //  gr: Scheme.framework is not neccessarily the output
+    //  todo: get product name from build settings
+    const TargetDir = `${buildDirectory[1]}/${BuildScheme}.framework`;
+    console.log(`TargetDir=${TargetDir} (ls before upload)`);
+    await exec.exec("ls", [TargetDir] );
 
+    console.log(`Uploading ${TargetDir}`);
     core.exportVariable('UPLOAD_NAME', `${BuildScheme}.framework`);
-    core.exportVariable('UPLOAD_DIR', `${buildDirectory[1]}/${BuildScheme}.framework`);
-  } catch (error) {
+    core.exportVariable('UPLOAD_DIR', `${TargetDir}`);
+  } 
+  catch (error) 
+  {
     core.setFailed(error.message);
   }
 }
