@@ -6,6 +6,7 @@ const artifact = require("@actions/artifact");
 const BuildScheme = core.getInput("BuildScheme");
 const Project = core.getInput("project");
 const Configuration = core.getInput("Configuration") || "Release";
+const Clean = core.getInput("Clean") || false;
 
 const BuildProject = `${Project}.xcodeproj`;
 
@@ -60,13 +61,21 @@ async function run()
       outputOptions
     );
 
-    //  gr: clean first, just in case
-    console.log(`Clean with BuildScheme=${BuildScheme}...`);
-    await exec.exec("xcodebuild", [
-      `-scheme`,
-      `${BuildScheme}`,
-      `clean`,
-    ]);
+    //  gr: clean fails for our builds as xcode won't delete our Build/ output dir, so clean is optional
+    if ( Clean )
+    {
+		//  gr: clean first, just in case
+     	console.log(`Clean with BuildScheme=${BuildScheme}...`);
+    	await exec.exec("xcodebuild", [
+    		`-scheme`,
+      		`${BuildScheme}`,
+      		`clean`,
+    	]);
+	}
+	else 
+	{
+		console.log(`Clean skipped as Clean variable=${Clean}`);
+	}
 
     //  gr: make Release a configuration
     console.log(`Build with BuildScheme=${BuildScheme}, Configuration=${Configuration}...`);
