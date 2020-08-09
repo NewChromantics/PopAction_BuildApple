@@ -37,7 +37,6 @@ async function run()
         Matches = Matches.filter( Line => Line!=null );
         Matches = Matches.map( Line => Line[1] );
         BuildDirectorys.push( ...Matches );
-      }
     }
     function OnError(Line)
     {
