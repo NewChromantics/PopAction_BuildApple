@@ -33,7 +33,7 @@ async function run()
         Line = Line.toString(); //  gr; is this not a string?
         //  extract all matches and add to our list
         const Lines = Line.split('\n');
-        let Matches = Lines.map( Line => regex1.exec(Line) );
+        let Matches = Lines.map( Line => Regex.exec(Line) );
         Matches = Matches.filter( Line => Line!=null );
         Matches = Matches.map( Line => Line[1] );
         BuildDirectorys.push( ...Matches );
