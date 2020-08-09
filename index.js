@@ -24,22 +24,30 @@ async function run()
       await exec.exec("brew", ['install', 'pkg-config'])
     }
 
-    // Get BuildDirectory
-    const regex = /TARGET_BUILD_DIR = ([\/-\w]+)\n/;
-    let buildDirectory = "";
-    let myError = "";
+    //  find all matching build directories
+    const Regex = new RegExp('TARGET_BUILD_DIR = (.*)', 'g');
+    const BuildDirectorys = [];
+    function OnStdOut(Line)
+    {
+        console.log(`OnStdOut ${Line} (${typeof Line}`);
+        Line = Line.toString(); //  gr; is this not a string?
+        //  extract all matches and add to our list
+        const Lines = str1.split('\n');
+        let Matches = Lines.map( Line => regex1.exec(Line) );
+        Matches = Matches.filter( Line => Line!=null );
+        Matches = Matches.map( Line => Line[1] );
+        BuildDirectorys.push( ...Matches );
+      }
+    }
+    function OnError(Line)
+    {
+        console.log(`STDERR ${Line.toString()}`);
+    }
     const outputOptions = {};
     outputOptions.listeners = {
-      stdout: (data) => {
-        buildDirectory += data.toString();
-        console.log(regex.exec(buildDirectory));
-        buildDirectory = regex.exec(buildDirectory);
-      },
-      stderr: (data) => {
-        myError += data.toString();
-      },
+      stdout: OnStdOut,
+      stderr: OnError
     };
-    console.log(`Build directory determined to be ${buildDirectory}`);
 
     //  gr: removed  
     //    `-workspace`, `${BuildProject}/project.xcworkspace`,
@@ -60,6 +68,12 @@ async function run()
       ],
       outputOptions
     );
+    if ( !BuildDirectorys.length )
+        throw `Failed to find any BuildDirectorys from output (looking for TARGET_BUILD_DIR)`;
+    console.log(`Build directory determined to be ${BuildDirectorys}`);
+    if ( BuildDirectorys.length > 1 )
+        console.log(`Found multiple build directories! ${BuildDirectorys}`);
+    const BuildDirectory = BuildDirectorys[0];
 
     //  gr: clean fails for our builds as xcode won't delete our Build/ output dir, so clean is optional
     if ( Clean )
@@ -88,7 +102,7 @@ async function run()
 
     //  gr: Scheme.framework is not neccessarily the output
     //  todo: get product name from build settings
-    const TargetDir = `${buildDirectory[1]}/${BuildScheme}.framework`;
+    const TargetDir = `${BuildDirectory}/${BuildScheme}.framework`;
     console.log(`TargetDir=${TargetDir} (ls before upload)`);
     await exec.exec("ls", [TargetDir] );
 
