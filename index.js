@@ -32,7 +32,7 @@ async function run()
         console.log(`OnStdOut ${Line} (${typeof Line}`);
         Line = Line.toString(); //  gr; is this not a string?
         //  extract all matches and add to our list
-        const Lines = str1.split('\n');
+        const Lines = Line.split('\n');
         let Matches = Lines.map( Line => regex1.exec(Line) );
         Matches = Matches.filter( Line => Line!=null );
         Matches = Matches.map( Line => Line[1] );
