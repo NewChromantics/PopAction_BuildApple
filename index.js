@@ -9,6 +9,7 @@ const Configuration = core.getInput("Configuration") || "Release";
 const Clean = core.getInput("Clean") || false;
 
 const BuildProject = `${Project}.xcodeproj`;
+const BuildProductDir = core.getInput("BuildTargetDir") || `${BuildScheme}.framework`;
 
 async function run() 
 {
@@ -103,7 +104,7 @@ async function run()
 
     //  gr: Scheme.framework is not neccessarily the output
     //  todo: get product name from build settings
-    const TargetDir = `${BuildDirectory}/${BuildScheme}.framework`;
+    const TargetDir = `${BuildDirectory}/${BuildProductDir}`;
     console.log(`TargetDir=${TargetDir} (ls before upload)`);
     await exec.exec("ls", [TargetDir] );
 
