@@ -9,8 +9,10 @@ inputs:
     default: false
   AppleID:
     required: false
+    default: false
   ApplePassword:
     required: false
+    default: false
 runs:
   using: 'node12'
   main: 'index.js'
