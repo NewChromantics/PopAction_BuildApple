@@ -7,7 +7,7 @@ const BuildScheme = core.getInput("BuildScheme");
 const Project = core.getInput("project");
 const Configuration = core.getInput("Configuration") || "Release";
 const Clean = core.getInput("Clean") || false;
-const Archive = core.getInput("ArchiveForTestFlight");
+const Archive = core.getInput("ArchiveForTestFlight").toLowerCase() === 'true';
 const AppleID = core.getInput("AppleID");
 const ApplePassword = core.getInput("ApplePassword");
 
