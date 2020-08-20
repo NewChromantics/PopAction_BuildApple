@@ -107,6 +107,12 @@ async function run()
 
     if(Archive)
     {
+      if ( !AppleID )
+        throw `No Apple ID, required for testflight`
+
+      if ( !ApplePassword )
+        throw `No Apple Password, required for testflight`
+
       console.log(`Archive App`);
       await exec.exec(`xcodebuild`, [
         `-scheme`,
