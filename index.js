@@ -7,6 +7,9 @@ const BuildScheme = core.getInput("BuildScheme");
 const Project = core.getInput("project");
 const Configuration = core.getInput("Configuration") || "Release";
 const Clean = core.getInput("Clean") || false;
+const Archive = core.getInput("ArchiveForTestFlight");
+const AppleID = core.getInput("AppleID");
+const ApplePassword = core.getInput("ApplePassword");
 
 const BuildProject = `${Project}.xcodeproj`;
 const BuildProductDir = core.getInput("BuildTargetDir") || `${BuildScheme}.framework`;
@@ -87,11 +90,11 @@ async function run()
       		`${BuildScheme}`,
       		`clean`,
     	]);
-	}
-	else 
-	{
-		console.log(`Clean skipped as Clean variable=${Clean}`);
-	}
+	  }
+    else 
+    {
+      console.log(`Clean skipped as Clean variable=${Clean}`);
+    }
 
     //  gr: make Release a configuration
     console.log(`Build with BuildScheme=${BuildScheme}, Configuration=${Configuration}...`);
@@ -101,6 +104,47 @@ async function run()
       `-configuration`,
       `${Configuration}`,
     ]);
+
+    if(Archive)
+    {
+      console.log(`Archive App`);
+      await exec.exec(`xcodebuild`, [
+        `-scheme`,
+        `${BuildScheme}`,
+        `-configuration`,
+        `${Configuration}`,
+        `-archivePath`,
+        `./build/${Project}.xarchive`
+      ]);
+
+      // tsdk: Hardcoded the path to the export options plist this may need to be more automated in the future
+      console.log(`Export ipa`);
+      await exec.exec(`xcodebuild`, [
+        `-archivePath`,
+        `./build/${Project}.xarchive`,
+        `-exportOptionsPlist`,
+        `Source_Ios/exportOptions.plist`,
+        `-exportPath`,
+        `./build`,
+        `-allowProvisioningUpdates`,
+        `-exportArchive`,
+      ]);
+
+      console.log("Publish app")
+      await exec.exec(`xcrun`, [
+        `altool`,
+        `—`,
+        `upload-app`,
+        `-t`,
+        `ios`,
+        `-f`,
+        `./build/${Project}_Ios.ipa`,
+        `-u`,
+        AppleID,
+        `-p`,
+        ApplePassword
+      ]);
+    }
 
     //  gr: Scheme.framework is not neccessarily the output
     //  todo: get product name from build settings

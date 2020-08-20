@@ -4,6 +4,13 @@ inputs:
     required: true
   project:
     required: true
+  ArchiveForTestFlight:
+    required: false
+    default: false
+  AppleID:
+    required: false
+  ApplePassword:
+    required: false
 runs:
   using: 'node12'
   main: 'index.js'
