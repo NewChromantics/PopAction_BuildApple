@@ -158,9 +158,11 @@ async function run()
     console.log(`TargetDir=${TargetDir} (ls before upload)`);
     await exec.exec("ls", [TargetDir] );
 
+	  //	gr: we DONT want to rename the target .framework or .app, so it's the same as the target dir
+	  //		possibly we may need to strip other paths later?
     console.log(`Uploading ${TargetDir}`);
-    core.exportVariable('UPLOAD_NAME', `${BuildScheme}.framework`);
-    core.exportVariable('UPLOAD_DIR', `${TargetDir}`);
+    core.exportVariable('UPLOAD_NAME', TargetDir);
+    core.exportVariable('UPLOAD_DIR', TargetDir);
   } 
   catch (error) 
   {
