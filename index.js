@@ -16,6 +16,7 @@ const BuildProductDir = core.getInput("BuildTargetDir") || `${BuildScheme}.frame
 
 async function run() 
 {
+  console.log(`UPLOAD_NAME=${BuildProductDir}`);
   try 
   {
     if ( !BuildScheme )
