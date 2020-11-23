@@ -89,11 +89,11 @@ async function run()
         ApplePassword
       ]);
     }
+
+    exec.exec(`echo`, ["UPLOAD_NAME=xcframeworks", ">>", `${GITHUB_ENV}`]);
+    exec.exec(`echo`, ["UPLOAD_DIR=Apple", ">>", `${GITHUB_ENV}`])
+
   }
-
-  exec.exec(`echo`, ["UPLOAD_NAME=xcframeworks", ">>", `${GITHUB_ENV}`]);
-  exec.exec(`echo`, ["UPLOAD_DIR=Apple", ">>", `${GITHUB_ENV}`])
-
   catch (error) 
   {
     core.setFailed(error.message);
