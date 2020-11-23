@@ -24,6 +24,7 @@ async function run()
     const BUILDPATH_SIM=`./build/${Project}_IosSimulator`
     const BUILDPATH_OSX=`./build/${Project}_Osx`
     const BUILDPATH_XCFRAMEWORK=`./build/${Project}.xcframework`
+
     // Create the archives
     await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Ios`, `-archivePath`, `${BUILDPATH_IOS}`, `SKIP_INSTALL=NO`, `-sdk`, `iphoneos`])
     await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Ios`, `-archivePath`, `${BUILDPATH_SIM}`, `SKIP_INSTALL=NO`, `-sdk`, `iphonesimulator`])
@@ -44,11 +45,10 @@ async function run()
       if ( !ApplePassword )
         throw `No Apple Password, required for testflight`
 
-      // tsdk: Hardcoded the path to the export options plist this may need to be more automated in the future
       console.log(`Export ipa`);
       await exec.exec(`xcodebuild`, [
         `-archivePath`,
-        `./build/${Project}.xarchive`,
+        BUILDPATH_IOS,
         `-exportOptionsPlist`,
         `Source_Ios/exportOptions.plist`,
         `-exportPath`,
@@ -56,6 +56,8 @@ async function run()
         `-allowProvisioningUpdates`,
         `-exportArchive`,
       ]);
+
+      const IOS_IPAPATH=`./build/${Project}_Ios.ipa`
 
       console.log(`Publish app`)
       await exec.exec(`xcrun`, [
@@ -65,7 +67,7 @@ async function run()
         `-t`,
         `ios`,
         `-f`,
-        `./build/${Project}_Ios.ipa`,
+        IOS_IPAPATH,
         `-u`,
         AppleID,
         `-p`,
