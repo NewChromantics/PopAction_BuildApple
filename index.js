@@ -1,18 +1,18 @@
-const core = require("@actions/core");
-const github = require("@actions/github");
-const exec = require("@actions/exec");
-const artifact = require("@actions/artifact");
+const core = require(`@actions/core`);
+const github = require(`@actions/github`);
+const exec = require(`@actions/exec`);
+const artifact = require(`@actions/artifact`);
 
-const BuildScheme = core.getInput("BuildScheme");
-const Project = core.getInput("project");
-const Configuration = core.getInput("Configuration") || "Release";
-const Clean = core.getInput("Clean") || false;
-const Archive = core.getInput("ArchiveForTestFlight").toLowerCase() === 'true';
-const AppleID = core.getInput("AppleID");
-const ApplePassword = core.getInput("ApplePassword");
+const BuildScheme = core.getInput(`BuildScheme`);
+const Project = core.getInput(`project`);
+const Configuration = core.getInput(`Configuration`) || `Release`;
+const Clean = core.getInput(`Clean`) || false;
+const Archive = core.getInput(`ArchiveForTestFlight`).toLowerCase() === `true`;
+const AppleID = core.getInput(`AppleID`);
+const ApplePassword = core.getInput(`ApplePassword`);
 
 const BuildProject = `${Project}.xcodeproj`;
-const BuildProductDir = core.getInput("BuildTargetDir") || `${BuildScheme}.framework`;
+const BuildProductDir = core.getInput(`BuildTargetDir`) || `${BuildScheme}.framework`;
 
 async function run() 
 {
@@ -22,24 +22,24 @@ async function run()
     if ( !Project )
       throw `No Project provided, required.`;
         
-    if (BuildScheme === "PopCameraDevice_Osx") {
-      await exec.exec("brew", ['install', 'pkg-config'])
+    if (BuildScheme === `PopCameraDevice_Osx`) {
+      await exec.exec(`brew`, [`install`, `pkg-config`])
     }
 
     // Set the build paths
-    const BUILDPATH_IOS="./build/${Project}_Ios"
-    const BUILDPATH_SIM="./build/${Project}_IosSimulator"
-    const BUILDPATH_OSX="./build/${Project}_Osx"
+    const BUILDPATH_IOS=`./build/${Project}_Ios`
+    const BUILDPATH_SIM=`./build/${Project}_IosSimulator`
+    const BUILDPATH_OSX=`./build/${Project}_Osx`
     // Create the archives
-    await exec.exec("xcodebuild", ['archive', '-scheme', '${Project}_Ios', '-archivePath', '$BUILDPATH_IOS', 'SKIP_INSTALL=NO', '-sdk', 'iphoneos'])
-    await exec.exec("xcodebuild", ['archive', '-scheme', '${Project}_Ios', '-archivePath', '$BUILDPATH_SIM', 'SKIP_INSTALL=NO', '-sdk', 'iphonesimulator'])
-    await exec.exec("xcodebuild", ['archive', '-scheme', '${Project}_Osx', '-archivePath', '$BUILDPATH_OSX', 'SKIP_INSTALL=NO'])
+    await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Ios`, `-archivePath`, `$BUILDPATH_IOS`, `SKIP_INSTALL=NO`, `-sdk`, `iphoneos`])
+    await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Ios`, `-archivePath`, `$BUILDPATH_SIM`, `SKIP_INSTALL=NO`, `-sdk`, `iphonesimulator`])
+    await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Osx`, `-archivePath`, `$BUILDPATH_OSX`, `SKIP_INSTALL=NO`])
     // Create xcframework
-    await exec.exec("xcodebuild", ['-create-xcframework', '-framework', ' \ ',
-                                   '${BUILDPATH_IOS}.xcarchive/Products/Library/Frameworks/${Project}_Ios.framework', '-framework', ' \ ',
-                                   '${BUILDPATH_SIM}.xcarchive/Products/Library/Frameworks/${Project}_Ios.framework', '-framework', ' \ ',
-                                   '${BUILDPATH_OSX}.xcarchive/Products/Library/Frameworks/${Project}_Osx.framework', '-output', ' \ ',
-                                   './build/${Project}.xcframework'])
+    await exec.exec(`xcodebuild`, [`-create-xcframework`, `-framework`, ` \ `,
+                                   `${BUILDPATH_IOS}.xcarchive/Products/Library/Frameworks/${Project}_Ios.framework`, `-framework`, ` \ `,
+                                   `${BUILDPATH_SIM}.xcarchive/Products/Library/Frameworks/${Project}_Ios.framework`, `-framework`, ` \ `,
+                                   `${BUILDPATH_OSX}.xcarchive/Products/Library/Frameworks/${Project}_Osx.framework`, `-output`, ` \ `,
+                                   `./build/${Project}.xcframework`])
 
     if(Archive)
     {
@@ -72,7 +72,7 @@ async function run()
         `-exportArchive`,
       ]);
 
-      console.log("Publish app")
+      console.log(`Publish app`)
       await exec.exec(`xcrun`, [
         `altool`,
         `—`,
@@ -89,8 +89,8 @@ async function run()
     }
 
     // Set these here but might be redundant now as they are all packagaed together
-    core.exportVariable('UPLOAD_NAME', "xcframeworks");
-    core.exportVariable('UPLOAD_DIR', "Apple");
+    core.exportVariable(`UPLOAD_NAME`, `xcframeworks`);
+    core.exportVariable(`UPLOAD_DIR`, `Apple`);
   }
   catch (error) 
   {
