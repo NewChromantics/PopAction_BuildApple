@@ -35,10 +35,10 @@ async function run()
     await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Ios`, `-archivePath`, `$BUILDPATH_SIM`, `SKIP_INSTALL=NO`, `-sdk`, `iphonesimulator`])
     await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Osx`, `-archivePath`, `$BUILDPATH_OSX`, `SKIP_INSTALL=NO`])
     // Create xcframework
-    await exec.exec(`xcodebuild`, [`-create-xcframework`, `-framework`, ` \ `,
-                                   `${BUILDPATH_IOS}.xcarchive/Products/Library/Frameworks/${Project}_Ios.framework`, `-framework`, ` \ `,
-                                   `${BUILDPATH_SIM}.xcarchive/Products/Library/Frameworks/${Project}_Ios.framework`, `-framework`, ` \ `,
-                                   `${BUILDPATH_OSX}.xcarchive/Products/Library/Frameworks/${Project}_Osx.framework`, `-output`, ` \ `,
+    await exec.exec(`xcodebuild`, [`-create-xcframework`, `-framework`,
+                                   `${BUILDPATH_IOS}.xcarchive/Products/Library/Frameworks/${Project}_Ios.framework`, `-framework`,
+                                   `${BUILDPATH_SIM}.xcarchive/Products/Library/Frameworks/${Project}_Ios.framework`, `-framework`,
+                                   `${BUILDPATH_OSX}.xcarchive/Products/Library/Frameworks/${Project}_Osx.framework`, `-output`,
                                    `./build/${Project}.xcframework`])
 
     if(Archive)
