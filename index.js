@@ -28,8 +28,6 @@ async function run()
     await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Ios`, `-archivePath`, `${BUILDPATH_SIM}`, `SKIP_INSTALL=NO`, `-sdk`, `iphonesimulator`])
     await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Osx`, `-archivePath`, `${BUILDPATH_OSX}`, `SKIP_INSTALL=NO`])
 
-    await exec.exec(`ls`);
-
     // Create xcframework
     await exec.exec(`xcodebuild`, [`-create-xcframework`, `-framework`,
                                    `${BUILDPATH_IOS}.xcarchive/Products/Library/Frameworks/${Project}_Ios.framework`, `-framework`,
