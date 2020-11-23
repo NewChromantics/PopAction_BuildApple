@@ -1,7 +1,5 @@
 name: 'Pop Ios build'
 inputs:
-  BuildScheme: 
-    required: true
   project:
     required: true
   ArchiveForTestFlight:

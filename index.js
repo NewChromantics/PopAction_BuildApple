@@ -19,9 +19,6 @@ async function run()
   console.log(`UPLOAD_NAME=${BuildProductDir}`);
   try 
   {
-    if ( !BuildScheme )
-      throw `No BuildScheme provided, required.`;
-        
     if ( !Project )
       throw `No Project provided, required.`;
         
@@ -29,82 +26,20 @@ async function run()
       await exec.exec("brew", ['install', 'pkg-config'])
     }
 
-    //  find all matching build directories
-    const Regex = new RegExp('TARGET_BUILD_DIR = (.*)', 'g');
-    const BuildDirectorys = [];
-    function OnStdOut(Line)
-    {
-        console.log(`OnStdOut ${Line} (${typeof Line}`);
-        Line = Line.toString(); //  gr; is this not a string?
-        //  extract all matches and add to our list
-        const Lines = Line.split('\n');
-        let Matches = Lines.map( Line => Regex.exec(Line) );
-        Matches = Matches.filter( Line => Line!=null );
-        Matches = Matches.map( Line => Line[1] );
-        BuildDirectorys.push( ...Matches );
-    }
-    function OnError(Line)
-    {
-        console.log(`STDERR ${Line.toString()}`);
-    }
-    const outputOptions = {};
-    outputOptions.listeners = {
-      stdout: OnStdOut,
-      stderr: OnError
-    };
-
-    //  gr: removed  
-    //    `-workspace`, `${BuildProject}/project.xcworkspace`,
-    //  from these as it was erroring with an unknown error on xcode11/mojave (but okay on xcode10/high sierra)
-  
-    console.log(`Listing schemes & configurations...`);
-    await exec.exec("xcodebuild", [
-      `-list`,
-    ]);
-
-    console.log(`Listing build settings for BuildScheme=${BuildScheme}...`);
-    await exec.exec(
-      "xcodebuild",
-      [
-        `-scheme`,
-        `${BuildScheme}`,
-        `-showBuildSettings`,
-        `-configuration`,
-        `${Configuration}`
-      ],
-      outputOptions
-    );
-    if ( !BuildDirectorys.length )
-        throw `Failed to find any BuildDirectorys from output (looking for TARGET_BUILD_DIR)`;
-    console.log(`Build directory determined to be ${BuildDirectorys}`);
-    if ( BuildDirectorys.length > 1 )
-        console.log(`Found multiple build directories! ${BuildDirectorys}`);
-    const BuildDirectory = BuildDirectorys[0];
-
-    //  gr: clean fails for our builds as xcode won't delete our Build/ output dir, so clean is optional
-    if ( Clean )
-    {
-		//  gr: clean first, just in case
-     	console.log(`Clean with BuildScheme=${BuildScheme}...`);
-    	await exec.exec("xcodebuild", [
-    		`-scheme`,
-      		`${BuildScheme}`,
-      		`clean`,
-    	]);
-	  }
-    else 
-    {
-      console.log(`Clean skipped as Clean variable=${Clean}`);
-    }
-
-    //  gr: make Release a configuration
-    console.log(`Build with BuildScheme=${BuildScheme}, Configuration=${Configuration}...`);
-    await exec.exec("xcodebuild", [
-      `-scheme`,
-      `${BuildScheme}`,
-      `-configuration`,
-      `${Configuration}`,
-    ]);
+    // Set the build paths
+    const BUILDPATH_IOS="./build/${PROJECT_NAME}_Ios"
+    const BUILDPATH_SIM="./build/${PROJECT_NAME}_IosSimulator"
+    const BUILDPATH_OSX="./build/${PROJECT_NAME}_Osx"
+    // Create the archives
+    await exec.exec("xcodebuild", ['archive', '-scheme', '${PROJECT_NAME}_Ios', '-archivePath', '$BUILDPATH_IOS', 'SKIP_INSTALL=NO', '-sdk', 'iphoneos'])
+    await exec.exec("xcodebuild", ['archive', '-scheme', '${PROJECT_NAME}_Ios', '-archivePath', '$BUILDPATH_SIM', 'SKIP_INSTALL=NO', '-sdk', 'iphonesimulator'])
+    await exec.exec("xcodebuild", ['archive', '-scheme', '${PROJECT_NAME}_Osx', '-archivePath', '$BUILDPATH_OSX', 'SKIP_INSTALL=NO'])
+    // Create xcframework
+    await exec.exec("xcodebuild", ['-create-xcframework', '-framework', ' \ ',
+                                   '${BUILDPATH_IOS}.xcarchive/Products/Library/Frameworks/${PROJECT_NAME}_Ios.framework', '-framework', ' \ ',
+                                   '${BUILDPATH_SIM}.xcarchive/Products/Library/Frameworks/${PROJECT_NAME}_Ios.framework', '-framework', ' \ ',
+                                   '${BUILDPATH_OSX}.xcarchive/Products/Library/Frameworks/${PROJECT_NAME}_Osx.framework', '-output', ' \ ',
+                                   './build/${PROJECT_NAME}.xcframework'])
 
     if(Archive)
     {
@@ -153,18 +88,10 @@ async function run()
       ]);
     }
 
-    //  gr: Scheme.framework is not neccessarily the output
-    //  todo: get product name from build settings
-    const TargetDir = `${BuildDirectory}/${BuildProductDir}`;
-    console.log(`TargetDir=${TargetDir} (ls before upload)`);
-    await exec.exec("ls", [TargetDir] );
-
-	  //	gr: we DONT want to rename the target .framework or .app, so it's the same as the target dir
-	  //		possibly we may need to strip other paths later?
-    console.log(`Uploading (UPLOAD_NAME=${BuildProductDir}), with UPLOAD_DIR=${TargetDir}`);
-    core.exportVariable('UPLOAD_NAME', BuildProductDir);
-    core.exportVariable('UPLOAD_DIR', TargetDir);
-  } 
+    // Set these here but might be redundant now as they are all packagaed together
+    core.exportVariable('UPLOAD_NAME', "xcframeworks");
+    core.exportVariable('UPLOAD_DIR', "Apple");
+  }
   catch (error) 
   {
     core.setFailed(error.message);
