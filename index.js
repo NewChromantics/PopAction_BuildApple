@@ -15,10 +15,6 @@ async function run()
     if ( !Project )
       throw `No Project provided, required.`;
         
-    if (BuildScheme === `PopCameraDevice_Osx`) {
-      await exec.exec(`brew`, [`install`, `pkg-config`])
-    }
-
     // Set the build paths
     const BUILDPATH_IOS=`./build/${Project}_Ios`
     const BUILDPATH_SIM=`./build/${Project}_IosSimulator`
