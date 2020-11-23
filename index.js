@@ -30,9 +30,9 @@ async function run()
     const BUILDPATH_SIM=`./build/${Project}_IosSimulator`
     const BUILDPATH_OSX=`./build/${Project}_Osx`
     // Create the archives
-    await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Ios`, `-archivePath`, `$BUILDPATH_IOS`, `SKIP_INSTALL=NO`, `-sdk`, `iphoneos`])
-    await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Ios`, `-archivePath`, `$BUILDPATH_SIM`, `SKIP_INSTALL=NO`, `-sdk`, `iphonesimulator`])
-    await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Osx`, `-archivePath`, `$BUILDPATH_OSX`, `SKIP_INSTALL=NO`])
+    await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Ios`, `-archivePath`, `${BUILDPATH_IOS}`, `SKIP_INSTALL=NO`, `-sdk`, `iphoneos`])
+    await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Ios`, `-archivePath`, `${BUILDPATH_SIM}`, `SKIP_INSTALL=NO`, `-sdk`, `iphonesimulator`])
+    await exec.exec(`xcodebuild`, [`archive`, `-scheme`, `${Project}_Osx`, `-archivePath`, `${BUILDPATH_OSX}`, `SKIP_INSTALL=NO`])
 
     await exec.exec(`ls`);
 
