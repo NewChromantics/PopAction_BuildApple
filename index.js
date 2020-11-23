@@ -89,10 +89,6 @@ async function run()
         ApplePassword
       ]);
     }
-
-    // Set these here but might be redundant now as they are all packagaed together
-    core.exportVariable(`UPLOAD_NAME`, `xcframeworks`);
-    core.exportVariable(`UPLOAD_DIR`, `Apple`);
   }
   catch (error) 
   {
