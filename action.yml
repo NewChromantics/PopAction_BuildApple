@@ -2,7 +2,7 @@ name: 'Pop Ios build'
 inputs:
   project:
     required: true
-  ArchiveForTestFlight:
+  publish:
     required: false
     default: false
   AppleID:

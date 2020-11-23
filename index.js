@@ -3,16 +3,10 @@ const github = require(`@actions/github`);
 const exec = require(`@actions/exec`);
 const artifact = require(`@actions/artifact`);
 
-const BuildScheme = core.getInput(`BuildScheme`);
 const Project = core.getInput(`project`);
-const Configuration = core.getInput(`Configuration`) || `Release`;
-const Clean = core.getInput(`Clean`) || false;
-const Archive = core.getInput(`ArchiveForTestFlight`).toLowerCase() === `true`;
+const Publish = core.getInput(`publish`).toLowerCase() === `true`;
 const AppleID = core.getInput(`AppleID`);
 const ApplePassword = core.getInput(`ApplePassword`);
-
-const BuildProject = `${Project}.xcodeproj`;
-const BuildProductDir = core.getInput(`BuildTargetDir`) || `${BuildScheme}.framework`;
 
 async function run() 
 {
@@ -43,7 +37,7 @@ async function run()
                                    `${BUILDPATH_OSX}.xcarchive/Products/Library/Frameworks/${Project}_Osx.framework`, `-output`,
                                    `./build/${Project}.xcframework`])
 
-    if(Archive)
+    if(Publish)
     {
       if ( !AppleID )
         throw `No Apple ID, required for testflight`
