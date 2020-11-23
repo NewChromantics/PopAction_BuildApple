@@ -27,19 +27,19 @@ async function run()
     }
 
     // Set the build paths
-    const BUILDPATH_IOS="./build/${PROJECT_NAME}_Ios"
-    const BUILDPATH_SIM="./build/${PROJECT_NAME}_IosSimulator"
-    const BUILDPATH_OSX="./build/${PROJECT_NAME}_Osx"
+    const BUILDPATH_IOS="./build/${Project}_Ios"
+    const BUILDPATH_SIM="./build/${Project}_IosSimulator"
+    const BUILDPATH_OSX="./build/${Project}_Osx"
     // Create the archives
-    await exec.exec("xcodebuild", ['archive', '-scheme', '${PROJECT_NAME}_Ios', '-archivePath', '$BUILDPATH_IOS', 'SKIP_INSTALL=NO', '-sdk', 'iphoneos'])
-    await exec.exec("xcodebuild", ['archive', '-scheme', '${PROJECT_NAME}_Ios', '-archivePath', '$BUILDPATH_SIM', 'SKIP_INSTALL=NO', '-sdk', 'iphonesimulator'])
-    await exec.exec("xcodebuild", ['archive', '-scheme', '${PROJECT_NAME}_Osx', '-archivePath', '$BUILDPATH_OSX', 'SKIP_INSTALL=NO'])
+    await exec.exec("xcodebuild", ['archive', '-scheme', '${Project}_Ios', '-archivePath', '$BUILDPATH_IOS', 'SKIP_INSTALL=NO', '-sdk', 'iphoneos'])
+    await exec.exec("xcodebuild", ['archive', '-scheme', '${Project}_Ios', '-archivePath', '$BUILDPATH_SIM', 'SKIP_INSTALL=NO', '-sdk', 'iphonesimulator'])
+    await exec.exec("xcodebuild", ['archive', '-scheme', '${Project}_Osx', '-archivePath', '$BUILDPATH_OSX', 'SKIP_INSTALL=NO'])
     // Create xcframework
     await exec.exec("xcodebuild", ['-create-xcframework', '-framework', ' \ ',
-                                   '${BUILDPATH_IOS}.xcarchive/Products/Library/Frameworks/${PROJECT_NAME}_Ios.framework', '-framework', ' \ ',
-                                   '${BUILDPATH_SIM}.xcarchive/Products/Library/Frameworks/${PROJECT_NAME}_Ios.framework', '-framework', ' \ ',
-                                   '${BUILDPATH_OSX}.xcarchive/Products/Library/Frameworks/${PROJECT_NAME}_Osx.framework', '-output', ' \ ',
-                                   './build/${PROJECT_NAME}.xcframework'])
+                                   '${BUILDPATH_IOS}.xcarchive/Products/Library/Frameworks/${Project}_Ios.framework', '-framework', ' \ ',
+                                   '${BUILDPATH_SIM}.xcarchive/Products/Library/Frameworks/${Project}_Ios.framework', '-framework', ' \ ',
+                                   '${BUILDPATH_OSX}.xcarchive/Products/Library/Frameworks/${Project}_Osx.framework', '-output', ' \ ',
+                                   './build/${Project}.xcframework'])
 
     if(Archive)
     {
