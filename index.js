@@ -155,7 +155,7 @@ async function run()
 
     //  gr: Scheme.framework is not neccessarily the output
     //  todo: get product name from build settings
-    const TargetDir = `${BuildDirectory}/${BuildProductDir}`;
+    let TargetDir = `${BuildDirectory}/${BuildProductDir}`;
     // tsdk: Change TargetDir if building a xcframework
     // PopH264_Universal
     if(BuildScheme.contains('Universal'))
