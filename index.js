@@ -166,10 +166,12 @@ async function run()
 
     if( BuildFilenames.size )
     {
-      console.log(`BuildFilenames determined to be ${BuildFilenames}`)
+      console.log(BuildFilenames)
+      console.log(`Size of BuildFiles set = ${BuildFilenames.size}`)
       if( BuildFilenames.size > 1 )
+      {
         throw `More than one output file name for SCRIPT_OUTPUT_FILE_[0-9]+, not handled`
-
+      }
       // This is how you get the first item of a set
       TargetDir = BuildFilenames.values().next().value;
     }
@@ -189,7 +191,9 @@ async function run()
 
     // If there is no SCRIPT_OUTPUT_FILE need to add the BuildProductDir to BuildDirectorys regex result
     if(!BuildFilenames.size)
+    {
       TargetDir += `/${BuildProductDir}`;
+    }
 
     console.log(`TargetDir=${TargetDir} (ls before upload)`);
     await exec.exec("ls", [TargetDir] );
