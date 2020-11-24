@@ -184,7 +184,7 @@ async function run()
 
     //  gr: Scheme.framework is not neccessarily the output
     //  todo: get product name from build settings
-    // Only use the TARGET_BUILD_DIR if there is no SCRIPT_OUTPUT_FILE
+    // If there is no SCRIPT_OUTPUT_FILE need to add the BuildProductDir to BuildDirectorys regex result
     const TargetDir = BuildDirectory;
     if(!BuildFilenames.size)
       TargetDir += `/${BuildProductDir}`;
