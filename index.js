@@ -2,6 +2,7 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 const exec = require("@actions/exec");
 const artifact = require("@actions/artifact");
+const normalize = require('path-normalize');
 
 const BuildScheme = core.getInput("BuildScheme");
 const Project = core.getInput("project");
@@ -198,6 +199,8 @@ async function run()
     {
       TargetDir += `/${BuildProductDir}`;
     }
+
+    TargetDir = normalize(TargetDir);
 
     console.log(`TargetDir=${TargetDir} (ls before upload)`);
     await exec.exec("ls", [TargetDir] );
