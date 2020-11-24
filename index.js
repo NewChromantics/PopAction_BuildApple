@@ -160,6 +160,10 @@ async function run()
       ]);
     }
 
+    //  gr: Scheme.framework is not neccessarily the output
+    //  todo: get product name from build settings
+    let TargetDir;
+
     if( BuildFilenames.size )
     {
       console.log(`BuildFilenames determined to be ${BuildFilenames}`)
@@ -167,7 +171,7 @@ async function run()
         throw `More than one output file name for SCRIPT_OUTPUT_FILE_[0-9]+, not handled`
 
       // This is how you get the first item of a set
-      const BuildDirectory = BuildFilenames.values().next().value;
+      TargetDir = BuildFilenames.values().next().value;
     }
     else if ( BuildDirectorys.size )
     {
@@ -175,7 +179,7 @@ async function run()
       if ( BuildDirectorys.size > 1 )
       {
         console.log(`Found multiple build directories! ${BuildDirectorys}`);
-        const BuildDirectory = BuildDirectorys.values().next().value;
+        TargetDir = BuildDirectorys.values().next().value;
       }
     }
     else
@@ -183,10 +187,7 @@ async function run()
       throw `Failed to find any BuildFilenames or BuildDirectorys from output (looking for SCRIPT_OUTPUT_FILE_[0-9]+ OR TARGET_BUILD_DIR)`;
     }
 
-    //  gr: Scheme.framework is not neccessarily the output
-    //  todo: get product name from build settings
     // If there is no SCRIPT_OUTPUT_FILE need to add the BuildProductDir to BuildDirectorys regex result
-    const TargetDir = BuildDirectory;
     if(!BuildFilenames.size)
       TargetDir += `/${BuildProductDir}`;
 
