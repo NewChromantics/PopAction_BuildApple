@@ -185,10 +185,9 @@ async function run()
     //  gr: Scheme.framework is not neccessarily the output
     //  todo: get product name from build settings
     // Only use the TARGET_BUILD_DIR if there is no SCRIPT_OUTPUT_FILE
+    const TargetDir = BuildDirectory;
     if(!BuildFilenames.size)
-    {
-      const TargetDir = `${BuildDirectory}/${BuildProductDir}`;
-    }
+      TargetDir += `/${BuildProductDir}`;
 
     console.log(`TargetDir=${TargetDir} (ls before upload)`);
     await exec.exec("ls", [TargetDir] );
