@@ -156,6 +156,10 @@ async function run()
     //  gr: Scheme.framework is not neccessarily the output
     //  todo: get product name from build settings
     const TargetDir = `${BuildDirectory}/${BuildProductDir}`;
+    // tsdk: Change TargetDir if building a xcframework
+    if(BuildScheme === "Universal")
+      TargetDir = `./build/${Project}.xcframework`
+
     console.log(`TargetDir=${TargetDir} (ls before upload)`);
     await exec.exec("ls", [TargetDir] );
 
