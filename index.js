@@ -157,7 +157,8 @@ async function run()
     //  todo: get product name from build settings
     const TargetDir = `${BuildDirectory}/${BuildProductDir}`;
     // tsdk: Change TargetDir if building a xcframework
-    if(BuildScheme === `${Project}_Universal`)
+    // PopH264_Universal
+    if(BuildScheme.contains('Universal'))
       TargetDir = `./build/${Project}.xcframework`
 
     console.log(`TargetDir=${TargetDir} (ls before upload)`);
