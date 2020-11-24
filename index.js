@@ -84,18 +84,18 @@ async function run()
       outputOptions
     );
 
-    if( BuildFilenames.length )
+    if( BuildFilenames.size )
     {
       console.log(`BuildFilenames determined to be ${BuildFilenames}`)
-      if( BuildFilenames.length > 1 )
+      if( BuildFilenames.size > 1 )
         throw `More than one output file name for SCRIPT_OUTPUT_FILE_[0-9]+, not handled`
 
       const BuildDirectory = BuildFilenames[0];
     }
-    else if ( BuildDirectorys.length )
+    else if ( BuildDirectorys.size )
     {
       console.log(`Build directory determined to be ${BuildDirectorys}`);
-      if ( BuildDirectorys.length > 1 )
+      if ( BuildDirectorys.size > 1 )
       {
         console.log(`Found multiple build directories! ${BuildDirectorys}`);
         const BuildDirectory = BuildDirectorys[0];
@@ -185,7 +185,7 @@ async function run()
     //  gr: Scheme.framework is not neccessarily the output
     //  todo: get product name from build settings
     // Only use the TARGET_BUILD_DIR if there is no SCRIPT_OUTPUT_FILE
-    if(!BuildFilenames.length)
+    if(!BuildFilenames.size)
     {
       const TargetDir = `${BuildDirectory}/${BuildProductDir}`;
     }
