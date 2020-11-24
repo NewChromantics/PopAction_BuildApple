@@ -198,6 +198,7 @@ async function run()
     if(!BuildFilenames.size)
     {
       TargetDir += `/${BuildProductDir}`;
+      BuildProductDir = 'apple';
     }
 
     TargetDir = normalize(TargetDir);
