@@ -30,8 +30,8 @@ async function run()
     }
 
     //  find all matching build directories
-    const TargetBuildRegex = new RegExp('TARGET_BUILD_DIR = (.*)', 'g');
-    const ScriptOutputRegex = new RegExp('SCRIPT_OUTPUT_FILE_[0-9]+ = (.*)', 'g');
+    const TargetBuildRegex = new RegExp('TARGET_BUILD_DIR ?= ?(.*)', 'g');
+    const ScriptOutputRegex = new RegExp('SCRIPT_OUTPUT_FILE_[0-9]+ ?= ?(.*)', 'g');
     const BuildFilenames = new Set();
     const BuildDirectorys = new Set();
     function OnStdOut(Line)
