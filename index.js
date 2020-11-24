@@ -166,7 +166,8 @@ async function run()
       if( BuildFilenames.size > 1 )
         throw `More than one output file name for SCRIPT_OUTPUT_FILE_[0-9]+, not handled`
 
-      const BuildDirectory = BuildFilenames[0];
+      // This is how you get the first item of a set
+      const BuildDirectory = BuildFilenames.values().next().value;
     }
     else if ( BuildDirectorys.size )
     {
@@ -174,7 +175,7 @@ async function run()
       if ( BuildDirectorys.size > 1 )
       {
         console.log(`Found multiple build directories! ${BuildDirectorys}`);
-        const BuildDirectory = BuildDirectorys[0];
+        const BuildDirectory = BuildDirectorys.values().next().value;
       }
     }
     else
