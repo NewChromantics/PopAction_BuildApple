@@ -164,6 +164,10 @@ async function run()
     //  todo: get product name from build settings
     let TargetDir;
 
+    //  tsdk: For some reason these have defined as the first item in the set?
+    BuildFilenames.delete(undefined);
+    BuildDirectorys.delete(undefined);
+
     if( BuildFilenames.size )
     {
       console.log(BuildFilenames)
