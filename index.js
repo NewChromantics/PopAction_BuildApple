@@ -32,8 +32,8 @@ async function run()
     //  find all matching build directories
     const TargetBuildRegex = new RegExp('TARGET_BUILD_DIR = (.*)', 'g');
     const ScriptOutputRegex = new RegExp('SCRIPT_OUTPUT_FILE_[0-9]+ = (.*)', 'g');
-    const BuildFilenames = [];
-    const BuildDirectorys = [];
+    const BuildFilenames = new Set();
+    const BuildDirectorys = new Set();
     function OnStdOut(Line)
     {
         console.log(`OnStdOut ${Line} (${typeof Line}`);
@@ -44,13 +44,13 @@ async function run()
         let Matches = Lines.map( Line => TargetBuildRegex.exec(Line) );
         Matches = Matches.filter( Line => Line!=null );
         Matches = Matches.map( Line => Line[1] );
-        BuildDirectorys.push( ...Matches );
+        BuildDirectorys.add( ...Matches );
 
         // reset matches and run again for Script Output
         Matches = Lines.map( Line => ScriptOutputRegex.exec(Line) );
         Matches = Matches.filter( Line => Line!=null );
         Matches = Matches.map( Line => Line[1] );
-        BuildFilenames.push( ...Matches );
+        BuildFilenames.add( ...Matches );
     }
     function OnError(Line)
     {
