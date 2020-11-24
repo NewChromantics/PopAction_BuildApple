@@ -30,7 +30,9 @@ async function run()
     }
 
     //  find all matching build directories
-    const Regex = new RegExp('TARGET_BUILD_DIR = (.*)', 'g');
+    const TargetBuildRegex = new RegExp('TARGET_BUILD_DIR = (.*)', 'g');
+    const ScriptOutputRegex = new RegExp('SCRIPT_OUTPUT_FILE_[0-9]+ = (.*)', 'g');
+    const BuildFilenames = [];
     const BuildDirectorys = [];
     function OnStdOut(Line)
     {
@@ -38,10 +40,17 @@ async function run()
         Line = Line.toString(); //  gr; is this not a string?
         //  extract all matches and add to our list
         const Lines = Line.split('\n');
-        let Matches = Lines.map( Line => Regex.exec(Line) );
+
+        let Matches = Lines.map( Line => TargetBuildRegex.exec(Line) );
         Matches = Matches.filter( Line => Line!=null );
         Matches = Matches.map( Line => Line[1] );
         BuildDirectorys.push( ...Matches );
+
+        // reset matches and run again for Script Output
+        Matches = Lines.map( Line => ScriptOutputRegex.exec(Line) );
+        Matches = Matches.filter( Line => Line!=null );
+        Matches = Matches.map( Line => Line[1] );
+        BuildFilenames.push( ...Matches );
     }
     function OnError(Line)
     {
@@ -74,12 +83,28 @@ async function run()
       ],
       outputOptions
     );
-    if ( !BuildDirectorys.length )
-        throw `Failed to find any BuildDirectorys from output (looking for TARGET_BUILD_DIR)`;
-    console.log(`Build directory determined to be ${BuildDirectorys}`);
-    if ( BuildDirectorys.length > 1 )
+
+    if( BuildFilenames.length )
+    {
+      console.log(`BuildFilenames determined to be ${BuildFilenames}`)
+      if( BuildFilenames.length > 1 )
+        throw `More than one output file name for SCRIPT_OUTPUT_FILE_[0-9]+, not handled`
+
+      const BuildDirectory = BuildFilenames[0];
+    }
+    else if ( BuildDirectorys.length )
+    {
+      console.log(`Build directory determined to be ${BuildDirectorys}`);
+      if ( BuildDirectorys.length > 1 )
+      {
         console.log(`Found multiple build directories! ${BuildDirectorys}`);
-    const BuildDirectory = BuildDirectorys[0];
+        const BuildDirectory = BuildDirectorys[0];
+      }
+    }
+    else
+    {
+      throw `Failed to find any BuildFilenames or BuildDirectorys from output (looking for SCRIPT_OUTPUT_FILE_[0-9]+ OR TARGET_BUILD_DIR)`;
+    }
 
     //  gr: clean fails for our builds as xcode won't delete our Build/ output dir, so clean is optional
     if ( Clean )
@@ -155,7 +180,12 @@ async function run()
 
     //  gr: Scheme.framework is not neccessarily the output
     //  todo: get product name from build settings
-    const TargetDir = `${BuildDirectory}/${BuildProductDir}`;
+    // Only use the TARGET_BUILD_DIR if there is no SCRIPT_OUTPUT_FILE
+    if(!BuildFilenames.length)
+    {
+      const TargetDir = `${BuildDirectory}/${BuildProductDir}`;
+    }
+
     console.log(`TargetDir=${TargetDir} (ls before upload)`);
     await exec.exec("ls", [TargetDir] );
 
