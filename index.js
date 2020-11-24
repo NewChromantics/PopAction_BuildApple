@@ -155,12 +155,7 @@ async function run()
 
     //  gr: Scheme.framework is not neccessarily the output
     //  todo: get product name from build settings
-    let TargetDir = `${BuildDirectory}/${BuildProductDir}`;
-    // tsdk: Change TargetDir if building a xcframework
-    // PopH264_Universal
-    if(BuildScheme.contains('Universal'))
-      TargetDir = `./build/${Project}.xcframework`
-
+    const TargetDir = `${BuildDirectory}/${BuildProductDir}`;
     console.log(`TargetDir=${TargetDir} (ls before upload)`);
     await exec.exec("ls", [TargetDir] );
 
