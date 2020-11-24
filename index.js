@@ -84,28 +84,6 @@ async function run()
       outputOptions
     );
 
-    if( BuildFilenames.size )
-    {
-      console.log(`BuildFilenames determined to be ${BuildFilenames}`)
-      if( BuildFilenames.size > 1 )
-        throw `More than one output file name for SCRIPT_OUTPUT_FILE_[0-9]+, not handled`
-
-      const BuildDirectory = BuildFilenames[0];
-    }
-    else if ( BuildDirectorys.size )
-    {
-      console.log(`Build directory determined to be ${BuildDirectorys}`);
-      if ( BuildDirectorys.size > 1 )
-      {
-        console.log(`Found multiple build directories! ${BuildDirectorys}`);
-        const BuildDirectory = BuildDirectorys[0];
-      }
-    }
-    else
-    {
-      throw `Failed to find any BuildFilenames or BuildDirectorys from output (looking for SCRIPT_OUTPUT_FILE_[0-9]+ OR TARGET_BUILD_DIR)`;
-    }
-
     //  gr: clean fails for our builds as xcode won't delete our Build/ output dir, so clean is optional
     if ( Clean )
     {
@@ -180,6 +158,28 @@ async function run()
         `-p`,
         ApplePassword
       ]);
+    }
+
+    if( BuildFilenames.size )
+    {
+      console.log(`BuildFilenames determined to be ${BuildFilenames}`)
+      if( BuildFilenames.size > 1 )
+        throw `More than one output file name for SCRIPT_OUTPUT_FILE_[0-9]+, not handled`
+
+      const BuildDirectory = BuildFilenames[0];
+    }
+    else if ( BuildDirectorys.size )
+    {
+      console.log(`Build directory determined to be ${BuildDirectorys}`);
+      if ( BuildDirectorys.size > 1 )
+      {
+        console.log(`Found multiple build directories! ${BuildDirectorys}`);
+        const BuildDirectory = BuildDirectorys[0];
+      }
+    }
+    else
+    {
+      throw `Failed to find any BuildFilenames or BuildDirectorys from output (looking for SCRIPT_OUTPUT_FILE_[0-9]+ OR TARGET_BUILD_DIR)`;
     }
 
     //  gr: Scheme.framework is not neccessarily the output
