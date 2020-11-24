@@ -124,12 +124,16 @@ async function run()
 
     //  gr: make Release a configuration
     console.log(`Build with BuildScheme=${BuildScheme}, Configuration=${Configuration}...`);
-    await exec.exec("xcodebuild", [
-      `-scheme`,
-      `${BuildScheme}`,
-      `-configuration`,
-      `${Configuration}`,
-    ]);
+    await exec.exec(
+      "xcodebuild",
+      [
+        `-scheme`,
+        `${BuildScheme}`,
+        `-configuration`,
+        `${Configuration}`,
+      ],
+      outputOptions
+    );
 
     if(Archive)
     {
