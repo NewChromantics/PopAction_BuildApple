@@ -13,11 +13,12 @@ const AppleID = core.getInput("AppleID");
 const ApplePassword = core.getInput("ApplePassword");
 
 const BuildProject = `${Project}.xcodeproj`;
-const BuildProductDir = core.getInput("BuildTargetDir") || `${BuildScheme}.framework`;
+const BuildProductDir = core.getInput("BuildTargetDir");
 
 async function run() 
 {
-  console.log(`UPLOAD_NAME=${BuildProductDir}`);
+    let UploadFilename = BuildProductDir;
+  console.log(`BuildProductDir=${BuildProductDir}`);
   try 
   {
     if ( !BuildScheme )
@@ -175,10 +176,14 @@ async function run()
       console.log(`Size of BuildFiles set = ${BuildFilenames.size}`)
       if( BuildFilenames.size > 1 )
       {
-        throw `More than one output file name for SCRIPT_OUTPUT_FILE_[0-9]+, not handled`
+        throw `More than one output file name for SCRIPT_OUTPUT_FILE_[0-9]+, not currently handled. System is seutp to only output one file/dir`
       }
       // This is how you get the first item of a set
       TargetDir = BuildFilenames.values().next().value;
+      
+      //    use the filename specified, as the upload filename
+      if ( !UploadFilename )
+        UploadFilename = TargetDir.split("/").pop();
     }
     else if ( BuildDirectorys.size )
     {
@@ -195,10 +200,13 @@ async function run()
     }
 
     // If there is no SCRIPT_OUTPUT_FILE need to add the BuildProductDir to BuildDirectorys regex result
+    //  todo: try and get the proper filename out from normal ios/osx/framework targets
+    if ( !UploadFilename )
+        UploadFilename = `${BuildScheme}.framework`;
+
     if(!BuildFilenames.size)
     {
-      TargetDir += `/${BuildProductDir}`;
-      BuildProductDir = 'apple';
+      TargetDir += `/${UploadFilename}`;
     }
 
     TargetDir = normalize(TargetDir);
@@ -206,10 +214,8 @@ async function run()
     console.log(`TargetDir=${TargetDir} (ls before upload)`);
     await exec.exec("ls", [TargetDir] );
 
-	  //	gr: we DONT want to rename the target .framework or .app, so it's the same as the target dir
-	  //		possibly we may need to strip other paths later?
-    console.log(`Uploading (UPLOAD_NAME=${BuildProductDir}), with UPLOAD_DIR=${TargetDir}`);
-    core.exportVariable('UPLOAD_NAME', BuildProductDir);
+    console.log(`Uploading (UPLOAD_NAME=${UploadFilename}), with UPLOAD_DIR=${TargetDir}`);
+    core.exportVariable('UPLOAD_NAME', UploadFilename);
     core.exportVariable('UPLOAD_DIR', TargetDir);
   } 
   catch (error) 
