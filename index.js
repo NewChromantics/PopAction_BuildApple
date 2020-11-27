@@ -32,10 +32,25 @@ async function run()
     }
 
     //  find all matching build directories
-    const TargetBuildRegex = new RegExp('TARGET_BUILD_DIR ?= ?(.*)', 'g');
-    const ScriptOutputRegex = new RegExp('SCRIPT_OUTPUT_FILE_[0-9]+ ?= ?(.*)', 'g');
-    const BuildFilenames = new Set();
-    const BuildDirectorys = new Set();
+    const Regex =
+    {
+      BuildDirectorys:
+      {
+        pattern: new RegExp('BUILD_DIR ?= ?(.*)', 'g'),
+        results: new Set()
+      },
+      FullProductName:
+      {
+        pattern: new RegExp('FULL_PRODUCT_NAME ?= ?(.*)', 'g'),
+        results: new Set()
+      },
+      ScriptOutput:
+      {
+        pattern: new RegExp('SCRIPT_OUTPUT_FILE_[0-9]+[ /\\/]?= ?(.*)', 'g'),
+        results: new Set()
+      }
+    }
+
     function OnStdOut(Line)
     {
         console.log(`OnStdOut ${Line} (${typeof Line}`);
@@ -43,16 +58,14 @@ async function run()
         //  extract all matches and add to our list
         const Lines = Line.split('\n');
 
-        let Matches = Lines.map( Line => TargetBuildRegex.exec(Line) );
-        Matches = Matches.filter( Line => Line!=null );
-        Matches = Matches.map( Line => Line[1] );
-        BuildDirectorys.add( ...Matches );
+        Object.values(Regex).map( key => 
+        {
+          let Matches = Lines.map( Line => key.pattern.exec(Line) );
+          Matches = Matches.filter( Line => Line!=null );
+          Matches = Matches.map( Line => Line[1] );
+          key.results.add( ...Matches );
+        });
 
-        // reset matches and run again for Script Output
-        Matches = Lines.map( Line => ScriptOutputRegex.exec(Line) );
-        Matches = Matches.filter( Line => Line!=null );
-        Matches = Matches.map( Line => Line[1] );
-        BuildFilenames.add( ...Matches );
     }
     function OnError(Line)
     {
@@ -167,46 +180,38 @@ async function run()
     let TargetDir;
 
     //  tsdk: For some reason these have defined as the first item in the set?
-    BuildFilenames.delete(undefined);
-    BuildDirectorys.delete(undefined);
+    Object.values(Regex).map( key => key.results.delete(undefined));
 
-    if( BuildFilenames.size )
+    if( Regex.BuildDirectorys.results.size && Regex.FullProductName.results.size)
     {
-      console.log(BuildFilenames)
-      console.log(`Size of BuildFiles set = ${BuildFilenames.size}`)
-      if( BuildFilenames.size > 1 )
-      {
-        throw `More than one output file name for SCRIPT_OUTPUT_FILE_[0-9]+, not currently handled. System is seutp to only output one file/dir`
-      }
+      console.log(`Using a Build Directory and FullProductName output: `)
+      console.log(Regex.BuildDirectorys.results)
+      console.log(Regex.FullProductName.results)
+      if( Regex.BuildDirectorys.results.size > 1 || Regex.FullProductName.results.size > 1)
+        throw `More than one output file name for BuildDirectorys and/or FullProductName.`
+
       // This is how you get the first item of a set
-      TargetDir = BuildFilenames.values().next().value;
-      
+      TargetDir = Regex.BuildDirectorys.results.values().next().value + Regex.FullProductName.results.values().next().value;
+
       //    use the filename specified, as the upload filename
       if ( !UploadFilename )
-        UploadFilename = TargetDir.split("/").pop();
+        UploadFilename = Regex.FullProductName.results.values().next().value
     }
-    else if ( BuildDirectorys.size )
+    else if ( Regex.ScriptOutput.results.size )
     {
-      console.log(`Build directory determined to be ${BuildDirectorys}`);
-      if ( BuildDirectorys.size > 1 )
+      console.log(`Using a script output: `)
+      console.log(Regex.ScriptOutput.results);
+      if ( Regex.ScriptOutput.results.size > 1 )
       {
-        console.log(`Found multiple build directories! ${BuildDirectorys}`);
-        TargetDir = BuildDirectorys.values().next().value;
+        console.log(`Warning: Found multiple script output files!`);
+        TargetDir = Regex.ScriptOutput.results.values().next().value;
       }
     }
     else
     {
-      throw `Failed to find any BuildFilenames or BuildDirectorys from output (looking for SCRIPT_OUTPUT_FILE_[0-9]+ OR TARGET_BUILD_DIR)`;
-    }
+      Object.values(Regex).map( key => console.log(key.results));
 
-    // If there is no SCRIPT_OUTPUT_FILE need to add the BuildProductDir to BuildDirectorys regex result
-    //  todo: try and get the proper filename out from normal ios/osx/framework targets
-    if ( !UploadFilename )
-        UploadFilename = `${BuildScheme}.framework`;
-
-    if(!BuildFilenames.size)
-    {
-      TargetDir += `/${UploadFilename}`;
+      throw `Failed to find valid BuildDirectorys, FullProduct Names or Script Outputs from stdout`;
     }
 
     TargetDir = normalize(TargetDir);
