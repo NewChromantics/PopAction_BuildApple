@@ -187,8 +187,6 @@ async function run()
       console.log(`Using a Build Directory and FullProductName output: `)
       console.log(Regex.BuildDirectorys.results)
       console.log(Regex.FullProductName.results)
-      if( Regex.BuildDirectorys.results.size > 1 || Regex.FullProductName.results.size > 1)
-        throw `More than one output file name for BuildDirectorys and/or FullProductName.`
 
       // This is how you get the first item of a set
       TargetDir = Regex.BuildDirectorys.results.values().next().value;
