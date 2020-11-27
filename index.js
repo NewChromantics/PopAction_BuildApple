@@ -179,7 +179,7 @@ async function run()
     //  todo: get product name from build settings
     let TargetDir;
 
-    //  tsdk: For some reason these have defined as the first item in the set?
+    //  tsdk: For some reason these have undefined as the first item in the set?
     Object.values(Regex).map( key => key.results.delete(undefined));
 
     if( Regex.BuildDirectorys.results.size && Regex.FullProductName.results.size)
@@ -191,11 +191,15 @@ async function run()
         throw `More than one output file name for BuildDirectorys and/or FullProductName.`
 
       // This is how you get the first item of a set
-      TargetDir = Regex.BuildDirectorys.results.values().next().value + Regex.FullProductName.results.values().next().value;
+      TargetDir = Regex.BuildDirectorys.results.values().next().value;
 
+      let FileName = Regex.FullProductName.results.values().next().value;
+      FileName = FileName.spilt("/").pop();
+
+      TargetDir += FileName;
       //    use the filename specified, as the upload filename
       if ( !UploadFilename )
-        UploadFilename = Regex.FullProductName.results.values().next().value
+        UploadFilename = FileName;
     }
     else if ( Regex.ScriptOutput.results.size )
     {
