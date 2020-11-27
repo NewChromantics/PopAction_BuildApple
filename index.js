@@ -192,7 +192,7 @@ async function run()
       TargetDir = Regex.BuildDirectorys.results.values().next().value;
 
       let FileName = Regex.FullProductName.results.values().next().value;
-      FileName = FileName.split("/").pop();
+      FileName = `/${FileName.split("/").pop()}`;
 
       TargetDir += FileName;
       //    use the filename specified, as the upload filename
