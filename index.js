@@ -19,15 +19,16 @@ async function run()
 {
     let UploadFilename = BuildProductDir;
   console.log(`BuildProductDir=${BuildProductDir}`);
-  try 
-  {
+
     if ( !BuildScheme )
       throw `No BuildScheme provided, required.`;
         
     if ( !Project )
       throw `No Project provided, required.`;
         
-    if (BuildScheme === "PopCameraDevice_Osx") {
+    if (BuildScheme === "PopCameraDevice_Osx") 
+    {
+        console.log(`Installing homebrew specifiically for PopCameraDevice_Osx`);
       await exec.exec("brew", ['install', 'pkg-config'])
     }
 
@@ -53,7 +54,7 @@ async function run()
 
     function OnStdOut(Line)
     {
-        console.log(`OnStdOut ${Line} (${typeof Line}`);
+        //console.log(`OnStdOut ${Line} (${typeof Line}`);
         Line = Line.toString(); //  gr; is this not a string?
         //  extract all matches and add to our list
         const Lines = Line.split('\n');
@@ -223,11 +224,7 @@ async function run()
     console.log(`Uploading (UPLOAD_NAME=${UploadFilename}), with UPLOAD_DIR=${TargetDir}`);
     core.exportVariable('UPLOAD_NAME', UploadFilename);
     core.exportVariable('UPLOAD_DIR', TargetDir);
-  } 
-  catch (error) 
-  {
-    core.setFailed(error.message);
-  }
 }
 
-run();
+//  if this throws, set a github action error
+run().catch( e => core.setFailed(`${e}`) );
