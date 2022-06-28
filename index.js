@@ -37,7 +37,7 @@ async function run()
 	{
 		BuildDirectorys:
 		{
-			pattern: new RegExp('BUILD_DIR ?= ?(.*)', 'g'),
+			pattern: new RegExp('BUILT_PRODUCTS_DIR ?= ?(.*)', 'g'),
 			results: new Set()
 		},
 		FullProductName:
