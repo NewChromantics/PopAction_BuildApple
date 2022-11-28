@@ -5,6 +5,7 @@ const artifact = require("@actions/artifact");
 const normalize = require('path-normalize');
 
 const BuildScheme = core.getInput("BuildScheme");
+const Destination = core.getInput("Destination");
 const Project = core.getInput("project");
 const Configuration = core.getInput("Configuration") || "Release";
 const Clean = core.getInput("Clean") || false;
@@ -123,6 +124,8 @@ async function run()
 			`${BuildScheme}`,
 			`-configuration`,
 			`${Configuration}`,
+			`-destination`,
+			`${Destination}`
 		],
 		outputOptions
 	);

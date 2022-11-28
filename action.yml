@@ -1,6 +1,10 @@
-name: 'Pop Ios build'
+name: 'Pop Apple/XCode build'
 inputs:
   BuildScheme: 
+    required: true
+  # this has been made a requirement as you cannot restrict or specify destinations (mac, simulator, ios device) via schemes or configuration
+  Destination:
+    description: "this becomes the -destination xcodebuild argument, eg. -destination generic/platform=iOS"
     required: true
   project:
     required: true
