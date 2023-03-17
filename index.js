@@ -232,8 +232,8 @@ async function run()
 	await exec.exec("ls -l", [TargetDir] );
 
 	console.log(`Uploading (UPLOAD_NAME=${UploadFilename}), with UPLOAD_DIR=${TargetDir}`);
-	core.exportVariable('UPLOAD_NAME', UploadFilename);
-	core.exportVariable('UPLOAD_DIR', TargetDir);
+	core.setOutput('UPLOAD_NAME', UploadFilename);
+	core.setOutput('UPLOAD_DIR', TargetDir);
 }
 
 //  if this throws, set a github action error
