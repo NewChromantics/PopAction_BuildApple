@@ -2,12 +2,18 @@ PopAction_BuildApple
 ==========
 This action is to ease building xcode schemes.
 
-Inputs
+Required Inputs
 --------------
-
-There are 2 required inputs to the action
-  - BuildScheme 
-  - Project
+- `BuildScheme` Name of the scheme you wish to build 
+- `Project` This is essentially the name before `.xcodeproj`
+- `Destination` This is to specify the platform to build to; this was added as IOS schemes would often default to a simulator.
+	- The build logs will list all destinations for a project + scheme. via `xcodebuild -scheme XXX -showBuildSettings`
+	- This is sent to `xcodebuild -destination YOURDESTINATION`
+	- see `man xcodebuild` or https://mokacoding.com/blog/xcodebuild-destination-options/
+	- `"generic/platform=iOS"` Any IOS device platform
+	- `"platform=macOS,arch=x86_64"`
+	- `"platform=iOS Simulator,name=iPhone 6,OS=9.1"`
+	- `"platform=macOS"`
 
 The other inputs are related to Publishing to Testflight
   - ArchiveForTestFlight = bool (used in an if statement)
