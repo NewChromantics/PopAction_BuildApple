@@ -94,7 +94,9 @@ async function run()
 			`${BuildScheme}`,
 			`-showBuildSettings`,
 			`-configuration`,
-			`${Configuration}`
+			`${Configuration}`,
+			`-destination`,
+			`${Destination}`
 		],
 		outputOptions
 	);
