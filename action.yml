@@ -6,6 +6,9 @@ inputs:
   Destination:
     description: "this becomes the -destination xcodebuild argument, eg. -destination generic/platform=iOS"
     required: true
+  Sdk:
+    description: "xcodebuild -sdk XXXX, eg. appletvos iphoneos"
+    required: false
   project:
     required: true
   ArchiveForTestFlight:

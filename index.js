@@ -6,6 +6,7 @@ const normalize = require('path-normalize');
 
 const BuildScheme = core.getInput("BuildScheme");
 const Destination = core.getInput("Destination");
+const Sdk = core.getInput("Sdk") || false;
 const Project = core.getInput("project");
 const Configuration = core.getInput("Configuration") || "Release";
 const Clean = core.getInput("Clean") || false;
@@ -79,6 +80,27 @@ async function run()
 	  stderr: OnError
 	};
 
+	
+	const BuildOptions =
+	[
+		`-scheme`,
+		`${BuildScheme}`,
+		`-showBuildSettings`,
+		`-configuration`,
+		`${Configuration}`,
+		`-destination`,
+		`${Destination}`
+	];
+	
+	//	add sdk if specified
+	if ( Sdk )
+	{
+		BuildOptions.push(`-sdk`,`${Sdk}`);
+	}
+	
+	const PreBuildOptions = BuildOptions.slice();
+	PreBuildOptions.push(`-showBuildSettings`);
+	
 	//  gr: removed
 	//    `-workspace`, `${BuildProject}/project.xcworkspace`,
 	//  from these as it was erroring with an unknown error on xcode11/mojave (but okay on xcode10/high sierra)
@@ -89,15 +111,7 @@ async function run()
 	console.log(`Listing build settings for BuildScheme=${BuildScheme}...`);
 	await exec.exec(
 		"xcodebuild",
-		[
-			`-scheme`,
-			`${BuildScheme}`,
-			`-showBuildSettings`,
-			`-configuration`,
-			`${Configuration}`,
-			`-destination`,
-			`${Destination}`
-		],
+		PreBuildOptions,
 		outputOptions
 	);
 
@@ -121,14 +135,7 @@ async function run()
 	console.log(`Build with BuildScheme=${BuildScheme}, Configuration=${Configuration}...`);
 	await exec.exec(
 		"xcodebuild",
-		[
-			`-scheme`,
-			`${BuildScheme}`,
-			`-configuration`,
-			`${Configuration}`,
-			`-destination`,
-			`${Destination}`
-		],
+		BuildOptions,
 		outputOptions
 	);
 
@@ -142,16 +149,12 @@ async function run()
 		if ( !ApplePassword )
 			throw `No Apple Password, required for testflight`
 
+		const ArchiveBuildOptions = BuildOptions.slice();
+		ArchiveBuildOptions.push(`-archivePath`,`./build/${Project}.xarchive`);
+			
 		await exec.exec(
 			`xcodebuild`,
-			[
-				`-scheme`,
-				`${BuildScheme}`,
-				`-configuration`,
-				`${Configuration}`,
-				`-archivePath`,
-				`./build/${Project}.xarchive`
-			]
+			ArchiveBuildOptions
 		);
 
 		// tsdk: Hardcoded the path to the export options plist this may need to be more automated in the future

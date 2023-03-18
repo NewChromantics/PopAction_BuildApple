@@ -15,6 +15,9 @@ Required Inputs
 	- `"platform=iOS Simulator,name=iPhone 6,OS=9.1"`
 	- `"platform=macOS"`
 
+Optional Inputs
+- `Sdk` becomes `-sdk XXX`  
+
 The other inputs are related to Publishing to Testflight
   - ArchiveForTestFlight = bool (used in an if statement)
   - AppleID
