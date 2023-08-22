@@ -6,6 +6,7 @@ Required Inputs
 --------------
 - `BuildScheme` Name of the scheme you wish to build 
 - `Project` This is essentially the name before `.xcodeproj`
+	- In versions before `1.3.0` Project was `project` (lowercase!)
 - `Destination` This is to specify the platform to build to; this was added as IOS schemes would often default to a simulator.
 	- The build logs will list all destinations for a project + scheme. via `xcodebuild -scheme XXX -showBuildSettings`
 	- This is sent to `xcodebuild -destination YOURDESTINATION`

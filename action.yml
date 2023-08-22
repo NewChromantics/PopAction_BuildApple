@@ -9,7 +9,7 @@ inputs:
   Sdk:
     description: "xcodebuild -sdk XXXX, eg. appletvos iphoneos"
     required: false
-  project:
+  Project:
     required: true
   ArchiveForTestFlight:
     required: false

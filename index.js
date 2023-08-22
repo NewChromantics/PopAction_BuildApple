@@ -7,7 +7,7 @@ const normalize = require('path-normalize');
 const BuildScheme = core.getInput("BuildScheme");
 const Destination = core.getInput("Destination");
 const Sdk = core.getInput("Sdk") || false;
-const Project = core.getInput("project");
+const Project = core.getInput("Project");
 const Configuration = core.getInput("Configuration") || "Release";
 const Clean = core.getInput("Clean") || false;
 const Archive = core.getInput("ArchiveForTestFlight").toLowerCase() === 'true';
