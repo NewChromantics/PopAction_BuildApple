@@ -9,6 +9,7 @@ const Destination = core.getInput("Destination");
 const Sdk = core.getInput("Sdk") || false;
 const Project = core.getInput("Project") || false;
 const Configuration = core.getInput("Configuration") || "Release";
+const AdditionalParams = core.getInput("AdditionalParams") || false;
 const Clean = core.getInput("Clean") || false;
 const Archive = core.getInput("ArchiveForTestFlight").toLowerCase() === 'true';
 const AppleID = core.getInput("AppleID");
@@ -97,6 +98,8 @@ async function run()
 	BuildOptions.push(`-configuration`,`${Configuration}`);
 	BuildOptions.push(`-destination`,`${Destination}`);
 	
+	if ( AdditionalParams )
+		BuildOptions.push( ...AdditionalParams.split(' ') );	
 	
 	//	add sdk if specified
 	if ( Sdk )

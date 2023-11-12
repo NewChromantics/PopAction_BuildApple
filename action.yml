@@ -12,6 +12,9 @@ inputs:
   Project:
     description: "Path to .xcodeproj. xcodebuild -project $Project.xcodeproj. If not provided xcodebuild looks in current working directory"
     required: false
+  AdditionalParams:
+    descripton: "Additional params to pass to xcodebuild"
+    required: false
   ArchiveForTestFlight:
     required: false
     default: false

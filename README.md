@@ -22,6 +22,7 @@ Optional Inputs
 	- `xcodebuild` will use current working directory if not provided
 	- In versions before `1.3.0` Project was `project` (lowercase!)
 	- In versions before `1.3.1` this was required
+- `AdditionalParams` will be passed to all `xcodebuild` commands
 
 The other inputs are related to Publishing to Testflight
   - ArchiveForTestFlight = bool (used in an if statement)
