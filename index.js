@@ -103,18 +103,26 @@ async function run()
 	{
 		BuildOptions.push(`-sdk`,`${Sdk}`);
 	}
+
+	{
+		const ListOptions = [];
+		if ( ProjectPath )
+		{
+			ListOptions.push(`-project`,ProjectPath);
+		}
+		ListOptions.push(`-list`);
+		
+		console.log(`Listing schemes & configurations...`);
+		await exec.exec("xcodebuild", ListOptions );
+	}
 	
 	{
-		const PreBuildOptions = BuildOptions.slice();
-		PreBuildOptions.push(`-showBuildSettings`);
-		
 		//  gr: removed
 		//    `-workspace`, `${ProjectPath}/project.xcworkspace`,
 		//  from these as it was erroring with an unknown error on xcode11/mojave (but okay on xcode10/high sierra)
-		
-		console.log(`Listing schemes & configurations...`);
-		await exec.exec("xcodebuild", [`-list`]);
-		
+		const PreBuildOptions = BuildOptions.slice();
+		PreBuildOptions.push(`-showBuildSettings`);
+	
 		console.log(`Listing build settings for BuildScheme=${BuildScheme}...`);
 		await exec.exec(
 						"xcodebuild",
