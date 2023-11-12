@@ -7,14 +7,13 @@ const normalize = require('path-normalize');
 const BuildScheme = core.getInput("BuildScheme");
 const Destination = core.getInput("Destination");
 const Sdk = core.getInput("Sdk") || false;
-const Project = core.getInput("Project");
+const Project = core.getInput("Project") || false;
 const Configuration = core.getInput("Configuration") || "Release";
 const Clean = core.getInput("Clean") || false;
 const Archive = core.getInput("ArchiveForTestFlight").toLowerCase() === 'true';
 const AppleID = core.getInput("AppleID");
 const ApplePassword = core.getInput("ApplePassword");
 
-const BuildProject = `${Project}.xcodeproj`;
 const BuildProductDir = core.getInput("BuildTargetDir");
 
 async function run() 
@@ -25,15 +24,24 @@ async function run()
 	if ( !BuildScheme )
 		throw `No BuildScheme provided, required.`;
 
-	if ( !Project )
-		throw `No Project provided, required.`;
-
 	if (BuildScheme === "PopCameraDevice_Osx")
 	{
 		console.log(`Installing homebrew specifiically for PopCameraDevice_Osx`);
 		await exec.exec("brew", ['install', 'pkg-config'])
 	}
 
+	let ProjectPath = Project;
+	
+	//	detect empty strings
+	if ( ProjectPath typeof '' )
+		if ( ProjectPath.length == 0 )
+			ProjectPath = null;
+	
+	//	append xcodeproj if missing
+	if ( ProjectPath && !ProjectPath.endsWith('.xcodeproj') )
+		ProjectPath += '.xcodeproj';
+
+	
 	//  find all matching build directories
 	const Regex =
 	{
@@ -81,15 +89,19 @@ async function run()
 	};
 
 	
-	const BuildOptions =
-	[
-		`-scheme`,
-		`${BuildScheme}`,
-		`-configuration`,
-		`${Configuration}`,
-		`-destination`,
-		`${Destination}`
-	];
+	const BuildOptions = [];
+	
+	//	add path to project if specified
+	if ( ProjectPath )
+	{
+		BuildOptions.push(`-project`,ProjectPath);
+	}
+	
+	//	require these
+	BuildOptions.push(`-scheme`,`${BuildScheme}`);
+	BuildOptions.push(`-configuration`,`${Configuration}`);
+	BuildOptions.push(`-destination`,`${Destination}`);
+	
 	
 	//	add sdk if specified
 	if ( Sdk )
@@ -97,33 +109,33 @@ async function run()
 		BuildOptions.push(`-sdk`,`${Sdk}`);
 	}
 	
-	const PreBuildOptions = BuildOptions.slice();
-	PreBuildOptions.push(`-showBuildSettings`);
-	
-	//  gr: removed
-	//    `-workspace`, `${BuildProject}/project.xcworkspace`,
-	//  from these as it was erroring with an unknown error on xcode11/mojave (but okay on xcode10/high sierra)
-
-	console.log(`Listing schemes & configurations...`);
-	await exec.exec("xcodebuild", [`-list`]);
-
-	console.log(`Listing build settings for BuildScheme=${BuildScheme}...`);
-	await exec.exec(
-		"xcodebuild",
-		PreBuildOptions,
-		outputOptions
-	);
+	{
+		const PreBuildOptions = BuildOptions.slice();
+		PreBuildOptions.push(`-showBuildSettings`);
+		
+		//  gr: removed
+		//    `-workspace`, `${ProjectPath}/project.xcworkspace`,
+		//  from these as it was erroring with an unknown error on xcode11/mojave (but okay on xcode10/high sierra)
+		
+		console.log(`Listing schemes & configurations...`);
+		await exec.exec("xcodebuild", [`-list`]);
+		
+		console.log(`Listing build settings for BuildScheme=${BuildScheme}...`);
+		await exec.exec(
+						"xcodebuild",
+						PreBuildOptions,
+						outputOptions
+						);
+	}
 
 	//  gr: clean fails for our builds as xcode won't delete our Build/ output dir, so clean is optional
 	if ( Clean )
 	{
-		//  gr: clean first, just in case
+		const CleanBuildOptions = BuildOptions.slice();
+		CleanBuildOptions.push(`clean`);
+		
 		console.log(`Clean with BuildScheme=${BuildScheme}...`);
-		await exec.exec("xcodebuild", [
-			`-scheme`,
-			`${BuildScheme}`,
-			`clean`,
-		]);
+		await exec.exec("xcodebuild", CleanBuildOptions );
 	}
 	else
 	{
@@ -131,7 +143,7 @@ async function run()
 	}
 
 	//  gr: make Release a configuration
-	console.log(`Build with BuildScheme=${BuildScheme}, Configuration=${Configuration}...`);
+	console.log(`Build with ${...BuildOptions} ${...outputOptions}...`);
 	await exec.exec(
 		"xcodebuild",
 		BuildOptions,
@@ -172,6 +184,7 @@ async function run()
 			]
 		);
 
+		//	gr: remove all this. Superceded by actions specific for testflight uploads
 		console.log("Publish app")
 		await exec.exec(
 						`xcrun`,

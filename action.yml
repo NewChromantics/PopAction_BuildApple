@@ -10,7 +10,8 @@ inputs:
     description: "xcodebuild -sdk XXXX, eg. appletvos iphoneos"
     required: false
   Project:
-    required: true
+    description: "Path to .xcodeproj. xcodebuild -project $Project.xcodeproj. If not provided xcodebuild looks in current working directory"
+    required: false
   ArchiveForTestFlight:
     required: false
     default: false

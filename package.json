@@ -1,6 +1,6 @@
 {
   "name": "PopAppleAction",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "PopAppleAction",
   "main": "index.js",
   "scripts": {

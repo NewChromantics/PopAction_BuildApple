@@ -5,8 +5,6 @@ This action is to ease building xcode schemes.
 Required Inputs
 --------------
 - `BuildScheme` Name of the scheme you wish to build 
-- `Project` This is essentially the name before `.xcodeproj`
-	- In versions before `1.3.0` Project was `project` (lowercase!)
 - `Destination` This is to specify the platform to build to; this was added as IOS schemes would often default to a simulator.
 	- The build logs will list all destinations for a project + scheme. via `xcodebuild -scheme XXX -showBuildSettings`
 	- This is sent to `xcodebuild -destination YOURDESTINATION`
@@ -18,6 +16,12 @@ Required Inputs
 
 Optional Inputs
 - `Sdk` becomes `-sdk XXX`  
+- `Project` path to `.xcodeproj` directory for building
+	- passed to `xcodebuild -project $Project`
+	- Code will auto add `.xcodeproj` if not provided
+	- `xcodebuild` will use current working directory if not provided
+	- In versions before `1.3.0` Project was `project` (lowercase!)
+	- In versions before `1.3.1` this was required
 
 The other inputs are related to Publishing to Testflight
   - ArchiveForTestFlight = bool (used in an if statement)
