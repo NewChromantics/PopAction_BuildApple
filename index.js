@@ -32,11 +32,6 @@ async function run()
 
 	let ProjectPath = Project;
 	
-	//	detect empty strings
-	if ( ProjectPath typeof '' )
-		if ( ProjectPath.length == 0 )
-			ProjectPath = null;
-	
 	//	append xcodeproj if missing
 	if ( ProjectPath && !ProjectPath.endsWith('.xcodeproj') )
 		ProjectPath += '.xcodeproj';
