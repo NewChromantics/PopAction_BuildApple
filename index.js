@@ -138,7 +138,7 @@ async function run()
 	}
 
 	//  gr: make Release a configuration
-	console.log(`Build with ${...BuildOptions} ${...outputOptions}...`);
+	console.log(`Build with ${BuildOptions} ${outputOptions}...`);
 	await exec.exec(
 		"xcodebuild",
 		BuildOptions,
